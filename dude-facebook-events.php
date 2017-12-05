@@ -97,7 +97,7 @@ Class Dude_Facebook_Events {
     $response = $response['data'];
 
     foreach( $response as $key => $event ) {
-      if ( isset( $event['event_time'] ) ) {
+      if ( isset( $event['end_time'] ) ) {
         if( strtotime( 'now' ) > strtotime( $event['end_time'] ) ) {
           unset( $response[ $key ] );
         }
