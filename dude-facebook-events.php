@@ -101,7 +101,6 @@ Class Dude_Facebook_Events {
         unset( $response[ $key ] );
       }
 
-      unset( $response[ $key ]['place'] );
       unset( $response[ $key ]['timezone'] );
     }
 
