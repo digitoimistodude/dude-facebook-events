@@ -3,7 +3,7 @@
  * Plugin Name: Dude Facebook events
  * Plugin URI: https://github.com/digitoimistodude/dude-facebook-events
  * Description: Fetches upcoming events for Facebook page.
- * Version: 0.1.0
+ * Version: 0.1.1
  * Author: Digitoimisto Dude Oy, Timi Wahalahti
  * Author URI: https://www.dude.fi
  * Requires at least: 4.4
@@ -81,7 +81,7 @@ Class Dude_Facebook_Events {
 
 		$transient_name = apply_filters( 'dude-facebook-events/events_transient', 'dude-fb-events-'.$fbid, $fbid );
 		$events = get_transient( $transient_name );
-	  if( !empty( $events ) || false != $events )
+	  if( false !== $events )
 	    return $events;
 
 		$parameters = array(
@@ -95,6 +95,10 @@ Class Dude_Facebook_Events {
 
 		$response = apply_filters( 'dude-facebook-events/events', json_decode( $response['body'], true ) );
     $response = $response['data'];
+		
+		if ( empty( $response ) ) {
+      set_transient( $transient_name, array(), apply_filters( 'dude-facebook-events/events_transient_lifetime', '600' ) );
+    }
 
     foreach( $response as $key => $event ) {
       if( strtotime( 'now' ) > strtotime( $event['start_time'] ) ) {
