@@ -100,17 +100,23 @@ Class Dude_Facebook_Events {
       set_transient( $transient_name, array(), apply_filters( 'dude-facebook-events/events_transient_lifetime', '600' ) );
     }
 
+    $events_in_order = array();
     foreach( $response as $key => $event ) {
-      if( strtotime( 'now' ) > strtotime( $event['start_time'] ) ) {
-        unset( $response[ $key ] );
+      if( strtotime( 'now' ) > strtotime( $event['end_time'] ) ) {
+        continue;
       }
 
-      unset( $response[ $key ]['timezone'] );
+      unset( $event['place'] );
+      unset( $event['timezone'] );
+
+      $events_in_order[ strtotime( $event['end_time'] ) ] = $event;
     }
 
-		set_transient( $transient_name, $response, apply_filters( 'dude-facebook-events/events_transient_lifetime', '600' ) );
+    ksort( $events_in_order );
 
-		return $response;
+		set_transient( $transient_name, $events_in_order, apply_filters( 'dude-facebook-events/events_transient_lifetime', '600' ) );
+
+		return $events_in_order;
 	} // end function get_events
 
 	private function _call_api( $fbid = '', $parameters = array() ) {
